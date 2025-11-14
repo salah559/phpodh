@@ -15,7 +15,7 @@ if ($db_url) {
     define('DB_PORT', $db['port'] ?? '5432');
 } else {
     // بيئة cPanel - إعدادات قاعدة البيانات
-    define('DB_HOST', 'localhost');
+    define('DB_HOST', '127.0.0.1');  // استخدام IPv4 بدلاً من localhost
     define('DB_USER', 'ctdccyqq_salah');
     define('DB_PASS', 'silo@salah55');
     define('DB_NAME', 'ctdccyqq_odh');
