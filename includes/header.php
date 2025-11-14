@@ -14,12 +14,12 @@ if (!isset($_SESSION['cart'])) {
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/index.php">
+            <a class="navbar-brand d-flex align-items-center" href="index.php">
                 <span class="logo-icon">🐑</span>
                 <span class="brand-name">أضحيتي</span>
             </a>
@@ -29,24 +29,24 @@ if (!isset($_SESSION['cart'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="/index.php">الرئيسية</a>
+                        <a class="nav-link" href="index.php">الرئيسية</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/products.php">المنتجات</a>
+                        <a class="nav-link" href="products.php">المنتجات</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/orders.php">إتمام الطلب</a>
+                        <a class="nav-link" href="orders.php">إتمام الطلب</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="/orders.php">
+                        <a class="nav-link position-relative" href="orders.php">
                             <span>🛒</span>
                             <span class="cart-badge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-login" href="/admin.php">تسجيل الدخول</a>
+                        <a class="nav-link btn-login" href="admin.php">تسجيل الدخول</a>
                     </li>
                 </ul>
             </div>

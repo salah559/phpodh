@@ -8,9 +8,9 @@
                 <div class="col-md-4 mb-3">
                     <h5 class="text-golden">روابط سريعة</h5>
                     <ul class="list-unstyled">
-                        <li><a href="/index.php" class="text-white-50">الرئيسية</a></li>
-                        <li><a href="/products.php" class="text-white-50">المنتجات</a></li>
-                        <li><a href="/orders.php" class="text-white-50">الطلبات</a></li>
+                        <li><a href="index.php" class="text-white-50">الرئيسية</a></li>
+                        <li><a href="products.php" class="text-white-50">المنتجات</a></li>
+                        <li><a href="orders.php" class="text-white-50">الطلبات</a></li>
                     </ul>
                 </div>
                 <div class="col-md-4 mb-3">
@@ -27,6 +27,6 @@
     </footer>
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="/js/cart.js"></script>
+    <script src="js/cart.js"></script>
 </body>
 </html>
