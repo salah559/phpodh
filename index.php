@@ -1,5 +1,6 @@
 <?php 
 $page_title = 'الرئيسية';
+require_once 'config/config.php';
 include 'includes/header.php'; 
 ?>
 
@@ -9,7 +10,7 @@ include 'includes/header.php';
         <p>منصة موثوقة لشراء الأغنام والأضاحي بجودة عالية وأسعار منافسة</p>
         <div class="hero-buttons">
             <a href="#features" class="btn btn-golden">تعرف علينا</a>
-            <a href="products.php" class="btn btn-outline-golden">تصفح المنتجات</a>
+            <a href="<?php echo url('products.php'); ?>" class="btn btn-outline-golden">تصفح المنتجات</a>
         </div>
     </div>
 </div>
@@ -103,13 +104,13 @@ include 'includes/header.php';
             ?>
             <div class="col-12 text-center">
                 <p class="text-muted">لا توجد منتجات مميزة حالياً</p>
-                <a href="products.php" class="btn btn-golden">تصفح جميع المنتجات</a>
+                <a href="<?php echo url('products.php'); ?>" class="btn btn-golden">تصفح جميع المنتجات</a>
             </div>
             <?php endif; ?>
         </div>
         <?php if (count($featured_sheep) > 0): ?>
         <div class="text-center mt-4">
-            <a href="products.php" class="btn btn-golden">عرض جميع المنتجات</a>
+            <a href="<?php echo url('products.php'); ?>" class="btn btn-golden">عرض جميع المنتجات</a>
         </div>
         <?php endif; ?>
     </div>

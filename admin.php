@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once 'config/config.php';
 require_once 'config/database.php';
 
 if (!isset($_SESSION['csrf_token'])) {
@@ -27,7 +28,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
             $_SESSION['admin_username'] = $admin['username'];
             $_SESSION['admin_role'] = $admin['role'];
             $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-            header('Location: admin.php');
+            header('Location: ' . url('admin.php'));
             exit;
         } else {
             $loginError = 'اسم المستخدم أو كلمة المرور غير صحيحة';
@@ -43,7 +44,7 @@ if (isset($_GET['logout'])) {
     session_destroy();
     session_start();
     $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
-    header('Location: admin.php');
+    header('Location: ' . url('admin.php'));
     exit;
 }
 
@@ -57,7 +58,7 @@ if (!$isLoggedIn):
     <title>تسجيل الدخول - لوحة التحكم</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="<?php echo asset('css/style.css'); ?>">
 </head>
 <body class="bg-light">
     <div class="container">
@@ -131,6 +132,8 @@ if (!$isLoggedIn):
         const auth = getAuth(app);
         const provider = new GoogleAuthProvider();
         
+        const BASE_URL = '<?php echo BASE_URL; ?>';
+        
         document.getElementById('googleSignInBtn').addEventListener('click', async () => {
             try {
                 const result = await signInWithPopup(auth, provider);
@@ -138,7 +141,8 @@ if (!$isLoggedIn):
                 const idToken = await user.getIdToken();
                 
                 // إرسال البيانات إلى الخادم للتحقق
-                const response = await fetch('/auth/google-signin.php', {
+                const authUrl = BASE_URL ? BASE_URL + '/auth/google-signin.php' : 'auth/google-signin.php';
+                const response = await fetch(authUrl, {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -155,8 +159,9 @@ if (!$isLoggedIn):
                 
                 if (data.success) {
                     // نجح تسجيل الدخول
-                    window.location.href = 'admin.php';
-                } else {
+                    const adminUrl = BASE_URL ? BASE_URL + '/admin.php' : 'admin.php';
+                    window.location.href = adminUrl;
+                } else{
                     // فشل تسجيل الدخول
                     document.getElementById('loginMessage').innerHTML = 
                         '<div class="alert alert-danger">' + data.message + '</div>';
@@ -232,7 +237,7 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
     <title>لوحة التحكم - أضحيتي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="/css/style.css">
+    <link rel="stylesheet" href="<?php echo asset('css/style.css'); ?>">
 </head>
 <body>
     <div class="d-flex">

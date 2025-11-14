@@ -58,7 +58,9 @@ function getCart() {
 function saveCart(cart) {
     localStorage.setItem('adhiyati_cart', JSON.stringify(cart));
     
-    fetch('api/sync_cart.php', {
+    const apiUrl = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL + '/api/sync_cart.php' : '/api/sync_cart.php';
+    
+    fetch(apiUrl, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',

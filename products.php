@@ -1,5 +1,6 @@
 <?php 
 $page_title = 'المنتجات';
+require_once 'config/config.php';
 include 'includes/header.php';
 require_once 'config/database.php';
 
@@ -94,7 +95,8 @@ $products = $stmt->fetchAll();
 
 <script>
 function filterProducts(category) {
-    window.location.href = 'products.php?category=' + category;
+    const url = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL + '/products.php?category=' + category : '/products.php?category=' + category;
+    window.location.href = url;
 }
 </script>
 

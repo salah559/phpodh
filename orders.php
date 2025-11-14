@@ -1,5 +1,6 @@
 <?php 
 $page_title = 'إتمام الطلب';
+require_once 'config/config.php';
 include 'includes/header.php';
 ?>
 
@@ -10,7 +11,7 @@ include 'includes/header.php';
         <div class="col-md-7">
             <div class="bg-white p-4 rounded shadow-sm">
                 <h3 class="mb-4">معلومات الطلب</h3>
-                <form id="orderForm" method="POST" action="api/submit_order.php">
+                <form id="orderForm" method="POST" action="<?php echo url('api/submit_order.php'); ?>">
                     <div class="mb-3">
                         <label class="form-label">الاسم الكامل *</label>
                         <input type="text" class="form-control" name="user_name" required>
@@ -141,7 +142,9 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
     formData.append('cart', JSON.stringify(cart));
     formData.append('total', getTotalPrice());
     
-    fetch('api/submit_order.php', {
+    const apiUrl = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL + '/api/submit_order.php' : '/api/submit_order.php';
+    
+    fetch(apiUrl, {
         method: 'POST',
         body: formData
     })
@@ -150,7 +153,8 @@ document.getElementById('orderForm').addEventListener('submit', function(e) {
         if (data.success) {
             alert('تم إرسال طلبك بنجاح! سيتم التواصل معك قريباً');
             clearCart();
-            window.location.href = 'index.php';
+            const homeUrl = (typeof BASE_URL !== 'undefined' && BASE_URL) ? BASE_URL + '/index.php' : '/index.php';
+            window.location.href = homeUrl;
         } else {
             alert('حدث خطأ: ' + data.message);
         }

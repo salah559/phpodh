@@ -1,5 +1,6 @@
 <?php
 session_start();
+require_once __DIR__ . '/../config/config.php';
 if (!isset($_SESSION['cart'])) {
     $_SESSION['cart'] = [];
 }
@@ -12,18 +13,18 @@ if (!isset($_SESSION['cart'])) {
     <meta name="description" content="منصة أضحيتي - موقع موثوق لشراء الأغنام والأضاحي في الجزائر بجودة عالية وأسعار منافسة. خراف محلية، رومانية وإسبانية.">
     <meta name="keywords" content="أضحية, خروف, أغنام, عيد الأضحى, الجزائر, خراف للبيع, أضاحي, شراء خروف">
     <meta name="author" content="أضحيتي">
-    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <link rel="icon" type="image/x-icon" href="<?php echo asset('favicon.ico'); ?>">
     <title><?php echo htmlspecialchars(isset($page_title) ? $page_title : 'أضحيتي'); ?> - منصة بيع الأغنام والأضاحي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="<?php echo asset('css/style.css'); ?>">
 </head>
 <body>
     <nav class="navbar navbar-expand-lg navbar-light bg-white shadow-sm">
         <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="index.php">
+            <a class="navbar-brand d-flex align-items-center" href="<?php echo url('index.php'); ?>">
                 <span class="logo-icon">🐑</span>
                 <span class="brand-name">أضحيتي</span>
             </a>
@@ -33,24 +34,24 @@ if (!isset($_SESSION['cart'])) {
             <div class="collapse navbar-collapse" id="navbarNav">
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
-                        <a class="nav-link" href="index.php">الرئيسية</a>
+                        <a class="nav-link" href="<?php echo url('index.php'); ?>">الرئيسية</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="products.php">المنتجات</a>
+                        <a class="nav-link" href="<?php echo url('products.php'); ?>">المنتجات</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="orders.php">إتمام الطلب</a>
+                        <a class="nav-link" href="<?php echo url('orders.php'); ?>">إتمام الطلب</a>
                     </li>
                 </ul>
                 <ul class="navbar-nav">
                     <li class="nav-item">
-                        <a class="nav-link position-relative" href="orders.php">
+                        <a class="nav-link position-relative" href="<?php echo url('orders.php'); ?>">
                             <span>🛒</span>
                             <span class="cart-badge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link btn-login" href="admin.php">تسجيل الدخول</a>
+                        <a class="nav-link btn-login" href="<?php echo url('admin.php'); ?>">تسجيل الدخول</a>
                     </li>
                 </ul>
             </div>
