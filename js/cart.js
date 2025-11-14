@@ -58,22 +58,24 @@ function getCart() {
 function saveCart(cart) {
     localStorage.setItem('adhiyati_cart', JSON.stringify(cart));
     
-    fetch('api/sync_cart.php', {
+    fetch('/api/sync_cart.php', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
         },
         body: JSON.stringify({ cart: cart })
-    });
+    }).catch(err => console.error('Cart sync error:', err));
+    
+    updateCartBadge();
 }
 
 function updateCartBadge() {
     const cart = getCart();
-    const badge = document.querySelector('.cart-badge');
-    if (badge) {
+    const badges = document.querySelectorAll('.cart-badge');
+    badges.forEach(badge => {
         badge.textContent = cart.length;
         badge.style.display = cart.length > 0 ? 'flex' : 'none';
-    }
+    });
 }
 
 function clearCart() {

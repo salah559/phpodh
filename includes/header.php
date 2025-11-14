@@ -42,9 +42,7 @@ if (!isset($_SESSION['cart'])) {
                     <li class="nav-item">
                         <a class="nav-link position-relative" href="/orders.php">
                             <span>🛒</span>
-                            <?php if (count($_SESSION['cart']) > 0): ?>
-                            <span class="cart-badge"><?php echo count($_SESSION['cart']); ?></span>
-                            <?php endif; ?>
+                            <span class="cart-badge" style="display: none;">0</span>
                         </a>
                     </li>
                     <li class="nav-item">

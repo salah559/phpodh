@@ -2,31 +2,47 @@
 session_start();
 require_once 'config/database.php';
 
+if (!isset($_SESSION['csrf_token'])) {
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+}
+
 $isLoggedIn = isset($_SESSION['admin_logged_in']) && $_SESSION['admin_logged_in'];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['login'])) {
-    $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
-    
-    $pdo = getDBConnection();
-    $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = ?");
-    $stmt->execute([$username]);
-    $admin = $stmt->fetch();
-    
-    if ($admin && password_verify($password, $admin['password_hash'])) {
-        $_SESSION['admin_logged_in'] = true;
-        $_SESSION['admin_id'] = $admin['id'];
-        $_SESSION['admin_username'] = $admin['username'];
-        $_SESSION['admin_role'] = $admin['role'];
-        header('Location: admin.php');
-        exit;
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        $loginError = 'طلب غير صالح';
     } else {
-        $loginError = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+        $username = $_POST['username'] ?? '';
+        $password = $_POST['password'] ?? '';
+        
+        $pdo = getDBConnection();
+        $stmt = $pdo->prepare("SELECT * FROM admins WHERE username = ?");
+        $stmt->execute([$username]);
+        $admin = $stmt->fetch();
+        
+        if ($admin && password_verify($password, $admin['password_hash'])) {
+            session_regenerate_id(true);
+            $_SESSION['admin_logged_in'] = true;
+            $_SESSION['admin_id'] = $admin['id'];
+            $_SESSION['admin_username'] = $admin['username'];
+            $_SESSION['admin_role'] = $admin['role'];
+            $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
+            header('Location: admin.php');
+            exit;
+        } else {
+            $loginError = 'اسم المستخدم أو كلمة المرور غير صحيحة';
+        }
     }
 }
 
 if (isset($_GET['logout'])) {
+    $_SESSION = array();
+    if (isset($_COOKIE[session_name()])) {
+        setcookie(session_name(), '', time()-3600, '/');
+    }
     session_destroy();
+    session_start();
+    $_SESSION['csrf_token'] = bin2hex(random_bytes(32));
     header('Location: admin.php');
     exit;
 }
@@ -59,6 +75,7 @@ if (!$isLoggedIn):
                         <?php endif; ?>
                         
                         <form method="POST">
+                            <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
                                 <label class="form-label">اسم المستخدم</label>
                                 <input type="text" class="form-control" name="username" required>
@@ -92,6 +109,11 @@ $page = $_GET['page'] ?? 'dashboard';
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
     header('Content-Type: application/json');
     
+    if (!isset($_POST['csrf_token']) || $_POST['csrf_token'] !== $_SESSION['csrf_token']) {
+        echo json_encode(['success' => false, 'message' => 'Invalid CSRF token']);
+        exit;
+    }
+    
     switch ($_POST['action']) {
         case 'add_sheep':
             $stmt = $pdo->prepare("INSERT INTO sheep (name, category, price, discount, images, age, weight, breed, health_status, description, featured) 
@@ -107,7 +129,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['action'])) {
                 $_POST['breed'],
                 $_POST['health_status'] ?? 'جيدة',
                 $_POST['description'],
-                isset($_POST['featured']) ? 1 : 0
+                isset($_POST['featured']) ? 't' : 'f'
             ]);
             echo json_encode(['success' => true]);
             exit;
@@ -373,10 +395,13 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
     
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
     <script>
+    const csrfToken = <?php echo json_encode($_SESSION['csrf_token']); ?>;
+    
     document.getElementById('addSheepForm')?.addEventListener('submit', function(e) {
         e.preventDefault();
         const formData = new FormData(this);
         formData.append('action', 'add_sheep');
+        formData.append('csrf_token', csrfToken);
         
         fetch('admin.php', {
             method: 'POST',
@@ -386,6 +411,13 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
         .then(data => {
             if (data.success) {
                 location.reload();
+            } else {
+                if (data.message && data.message.includes('CSRF')) {
+                    alert('انتهت صلاحية الجلسة. سيتم تحديث الصفحة.');
+                    location.reload();
+                } else {
+                    alert(data.message || 'حدث خطأ');
+                }
             }
         });
     });
@@ -395,6 +427,7 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
             const formData = new FormData();
             formData.append('action', 'delete_sheep');
             formData.append('id', id);
+            formData.append('csrf_token', csrfToken);
             
             fetch('admin.php', {
                 method: 'POST',
@@ -404,6 +437,8 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
             .then(data => {
                 if (data.success) {
                     location.reload();
+                } else {
+                    alert(data.message || 'حدث خطأ');
                 }
             });
         }
@@ -416,6 +451,7 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
         formData.append('action', 'update_order_status');
         formData.append('id', id);
         formData.append('status', status);
+        formData.append('csrf_token', csrfToken);
         
         fetch('admin.php', {
             method: 'POST',
@@ -425,6 +461,13 @@ $total_revenue = $pdo->query("SELECT SUM(total) FROM orders WHERE status = 'comp
         .then(data => {
             if (data.success) {
                 location.reload();
+            } else {
+                if (data.message && data.message.includes('CSRF')) {
+                    alert('انتهت صلاحية الجلسة. سيتم تحديث الصفحة.');
+                    location.reload();
+                } else {
+                    alert(data.message || 'حدث خطأ');
+                }
             }
         });
     }
