@@ -32,6 +32,21 @@ foreach ($pdo_extensions as $ext => $loaded) {
     echo "<p><strong>$ext:</strong> <span style='color:$color;'>$status</span></p>";
 }
 
+// تحديد قاعدة البيانات المطلوبة
+$db_url = getenv('DATABASE_URL');
+$required_driver = $db_url ? 'pdo_pgsql' : 'pdo_mysql';
+$driver_name = $db_url ? 'PostgreSQL' : 'MySQL';
+
+if (!extension_loaded($required_driver)) {
+    echo "<p style='color:red; background:#ffe6e6; padding:15px; border-radius:5px;'>";
+    echo "<strong>❌ تحذير:</strong> المشروع يحتاج إلى امتداد <strong>$required_driver</strong> لقاعدة بيانات $driver_name";
+    echo "</p>";
+} else {
+    echo "<p style='color:green; background:#e6ffe6; padding:15px; border-radius:5px;'>";
+    echo "<strong>✅ ممتاز!</strong> امتداد $driver_name متوفر ومُفعّل";
+    echo "</p>";
+}
+
 // 3. فحص الامتدادات الأخرى
 echo "<h2>🔧 امتدادات PHP الأخرى</h2>";
 $other_extensions = ['mbstring', 'json', 'session', 'curl'];
