@@ -4,9 +4,9 @@ User-agent: *
 Allow: /
 Disallow: /admin.php
 Disallow: /config/
-Disallow: /api/
 Disallow: /auth/
 Disallow: /includes/
+Disallow: /setup.php
 
 # السماح للصور
 Allow: /css/

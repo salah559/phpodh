@@ -14,17 +14,20 @@
     # RewriteRule ^(.*)$ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 </IfModule>
 
-# منع الوصول إلى الملفات الحساسة
+# منع الوصول إلى الملفات الحساسة (Apache 2.4+)
 <FilesMatch "^\.">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
 
 # حماية ملفات التكوين
 <FilesMatch "\.(ini|log|conf|sql)$">
-    Order allow,deny
-    Deny from all
+    Require all denied
 </FilesMatch>
+
+# حماية مجلد config
+<Directory "config">
+    Require all denied
+</Directory>
 
 # منع عرض محتوى المجلدات
 Options -Indexes

@@ -18,15 +18,30 @@
 
 ### 2. تعديل ملف إعدادات قاعدة البيانات
 
-افتح ملف `config/database.php` وعدل الأسطر التالية:
+⚠️ **مهم جداً:** ملف `config/database.php` يحتوي على معلومات حساسة!
+
+**الخطوات:**
+1. افتح ملف `config/database.php` في محرر النصوص
+2. ابحث عن السطور التالية في القسم `else`:
 
 ```php
-define('DB_HOST', 'localhost');  // عنوان الخادم من cPanel
-define('DB_USER', 'your_db_user');  // اسم المستخدم من cPanel
-define('DB_PASS', 'your_db_password');  // كلمة المرور من cPanel
-define('DB_NAME', 'your_db_name');  // اسم قاعدة البيانات من cPanel
-define('DB_PORT', '5432');  // رقم المنفذ
+define('DB_HOST', '127.0.0.1');  
+define('DB_USER', 'your_database_user');  // ⚠️ غيّر هذا
+define('DB_PASS', 'your_database_password');  // ⚠️ غيّر هذا
+define('DB_NAME', 'your_database_name');  // ⚠️ غيّر هذا
 ```
+
+3. عدّل القيم بمعلومات قاعدة البيانات من cPanel:
+```php
+define('DB_HOST', '127.0.0.1');  // أو localhost
+define('DB_USER', 'ctdccyqq_salah');  // اسم المستخدم من cPanel
+define('DB_PASS', 'password_here');  // كلمة المرور من cPanel
+define('DB_NAME', 'ctdccyqq_odh');  // اسم قاعدة البيانات من cPanel
+```
+
+4. احفظ الملف
+
+⚠️ **تحذير أمني:** لا ترفع ملف `database.php` إلى Git أو أي مستودع عام بعد إضافة معلوماتك الحقيقية!
 
 ### 3. رفع ملفات الموقع
 

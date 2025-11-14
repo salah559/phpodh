@@ -36,3 +36,7 @@ Thumbs.db
 cache/
 tmp/
 temp/
+
+# Database configuration (contains sensitive credentials)
+# ⚠️ مهم: لا ترفع ملف قاعدة البيانات مع بيانات الاعتماد الحقيقية
+# config/database.php

@@ -1,7 +1,6 @@
 <?php
-// يمكنك تغيير هذه الإعدادات حسب بيئة الاستضافة
-// للاستخدام في Replit: اترك كما هو
-// للاستخدام في cPanel: قم بتعديل القيم أدناه
+// نموذج لملف database.php
+// انسخ هذا الملف إلى database.php وقم بتحديث المعلومات
 
 $db_url = getenv('DATABASE_URL');
 if ($db_url) {
@@ -16,12 +15,12 @@ if ($db_url) {
 } else {
     // بيئة cPanel - إعدادات قاعدة البيانات
     // ⚠️ مهم: قم بتحديث هذه القيم بمعلومات قاعدة البيانات الخاصة بك
-    // لا ترفع هذا الملف إلى Git أو أي مستودع عام
-    define('DB_HOST', '127.0.0.1');  // استخدام IPv4 بدلاً من localhost
-    define('DB_USER', 'your_database_user');  // ⚠️ غيّر هذا
-    define('DB_PASS', 'your_database_password');  // ⚠️ غيّر هذا  
-    define('DB_NAME', 'your_database_name');  // ⚠️ غيّر هذا
-    define('DB_PORT', '5432');
+    // لا ترفع ملف database.php إلى Git أو أي مستودع عام
+    define('DB_HOST', '127.0.0.1');  // مثال: localhost أو 127.0.0.1
+    define('DB_USER', 'your_database_user');  // ⚠️ غيّر هذا باسم المستخدم الخاص بك
+    define('DB_PASS', 'your_database_password');  // ⚠️ غيّر هذا بكلمة المرور الخاصة بك
+    define('DB_NAME', 'your_database_name');  // ⚠️ غيّر هذا باسم قاعدة البيانات الخاصة بك
+    define('DB_PORT', '5432');  // المنفذ (5432 لـ PostgreSQL)
 }
 
 function getDBConnection() {
