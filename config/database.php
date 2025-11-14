@@ -3,11 +3,11 @@ $db_url = getenv('DATABASE_URL');
 if ($db_url) {
     $db = parse_url($db_url);
     
-    define('DB_HOST', $db['host']);
-    define('DB_USER', $db['user']);
-    define('DB_PASS', $db['pass']);
-    define('DB_NAME', ltrim($db['path'], '/'));
-    define('DB_PORT', $db['port']);
+    define('DB_HOST', $db['host'] ?? 'localhost');
+    define('DB_USER', $db['user'] ?? 'root');
+    define('DB_PASS', $db['pass'] ?? '');
+    define('DB_NAME', ltrim($db['path'] ?? '/adhiyati_db', '/'));
+    define('DB_PORT', $db['port'] ?? '5432');
 } else {
     define('DB_HOST', 'localhost');
     define('DB_USER', 'root');
