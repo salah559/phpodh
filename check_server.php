@@ -32,21 +32,6 @@ foreach ($pdo_extensions as $ext => $loaded) {
     echo "<p><strong>$ext:</strong> <span style='color:$color;'>$status</span></p>";
 }
 
-// تحديد قاعدة البيانات المطلوبة
-$db_url = getenv('DATABASE_URL');
-$required_driver = $db_url ? 'pdo_pgsql' : 'pdo_mysql';
-$driver_name = $db_url ? 'PostgreSQL' : 'MySQL';
-
-if (!extension_loaded($required_driver)) {
-    echo "<p style='color:red; background:#ffe6e6; padding:15px; border-radius:5px;'>";
-    echo "<strong>❌ تحذير:</strong> المشروع يحتاج إلى امتداد <strong>$required_driver</strong> لقاعدة بيانات $driver_name";
-    echo "</p>";
-} else {
-    echo "<p style='color:green; background:#e6ffe6; padding:15px; border-radius:5px;'>";
-    echo "<strong>✅ ممتاز!</strong> امتداد $driver_name متوفر ومُفعّل";
-    echo "</p>";
-}
-
 // 3. فحص الامتدادات الأخرى
 echo "<h2>🔧 امتدادات PHP الأخرى</h2>";
 $other_extensions = ['mbstring', 'json', 'session', 'curl'];
@@ -64,7 +49,8 @@ if (file_exists('config/database.php')) {
     try {
         require_once 'config/database.php';
         
-        echo "<p><strong>إعدادات قاعدة البيانات:</strong></p>";
+        echo "<p><strong>نوع قاعدة البيانات:</strong> <strong style='color:#D4AF37;'>" . DB_TYPE . "</strong></p>";
+        echo "<p><strong>إعدادات الاتصال:</strong></p>";
         echo "<ul>";
         echo "<li>الخادم: " . DB_HOST . "</li>";
         echo "<li>المنفذ: " . DB_PORT . "</li>";
@@ -72,15 +58,28 @@ if (file_exists('config/database.php')) {
         echo "<li>المستخدم: " . DB_USER . "</li>";
         echo "</ul>";
         
-        if (!extension_loaded('pdo_pgsql')) {
+        // تحديد الامتداد المطلوب حسب نوع القاعدة
+        $required_ext = DB_TYPE === 'mysql' ? 'pdo_mysql' : 'pdo_pgsql';
+        $db_name_ar = DB_TYPE === 'mysql' ? 'MySQL' : 'PostgreSQL';
+        
+        if (!extension_loaded($required_ext)) {
             echo "<p style='color:red; background:#ffe6e6; padding:15px; border-radius:5px;'>";
-            echo "<strong>❌ خطأ:</strong> امتداد pdo_pgsql غير مُفعّل في الخادم!<br>";
-            echo "يجب تفعيل PostgreSQL PDO من إعدادات PHP في cPanel أو الاتصال بالدعم الفني.";
+            echo "<strong>❌ خطأ:</strong> امتداد <strong>$required_ext</strong> غير مُفعّل في الخادم!<br>";
+            if (DB_TYPE === 'mysql') {
+                echo "يجب تفعيل MySQL PDO من إعدادات PHP في cPanel.<br>";
+                echo "اذهب إلى: cPanel → Select PHP Version → Extensions → تأكد من تفعيل pdo و pdo_mysql";
+            } else {
+                echo "يجب تفعيل PostgreSQL PDO من إعدادات PHP في cPanel أو الاتصال بالدعم الفني.";
+            }
             echo "</p>";
         } else {
+            echo "<p style='color:green; background:#e6ffe6; padding:10px; border-radius:5px;'>";
+            echo "✅ امتداد <strong>$required_ext</strong> مُفعّل بنجاح";
+            echo "</p>";
+            
             $pdo = getDBConnection();
             echo "<p style='color:green; background:#e6ffe6; padding:15px; border-radius:5px;'>";
-            echo "✅ <strong>نجح الاتصال بقاعدة البيانات!</strong>";
+            echo "✅ <strong>نجح الاتصال بقاعدة البيانات $db_name_ar!</strong>";
             echo "</p>";
         }
     } catch (Exception $e) {
