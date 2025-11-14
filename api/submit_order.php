@@ -9,16 +9,26 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     exit;
 }
 
-$user_name = $_POST['user_name'] ?? '';
-$phone = $_POST['phone'] ?? '';
-$state = $_POST['state'] ?? '';
-$city = $_POST['city'] ?? '';
-$notes = $_POST['notes'] ?? '';
+// تنظيف وتحقق من البيانات
+$user_name = htmlspecialchars(trim($_POST['user_name'] ?? ''), ENT_QUOTES, 'UTF-8');
+$phone = htmlspecialchars(trim($_POST['phone'] ?? ''), ENT_QUOTES, 'UTF-8');
+$state = htmlspecialchars(trim($_POST['state'] ?? ''), ENT_QUOTES, 'UTF-8');
+$city = htmlspecialchars(trim($_POST['city'] ?? ''), ENT_QUOTES, 'UTF-8');
+$notes = htmlspecialchars(trim($_POST['notes'] ?? ''), ENT_QUOTES, 'UTF-8');
 $cart = json_decode($_POST['cart'] ?? '[]', true);
 $total = floatval($_POST['total'] ?? 0);
 
+// التحقق من الحقول المطلوبة
 if (empty($user_name) || empty($phone) || empty($state) || empty($city)) {
+    http_response_code(400);
     echo json_encode(['success' => false, 'message' => 'الرجاء ملء جميع الحقول المطلوبة']);
+    exit;
+}
+
+// التحقق من تنسيق رقم الهاتف (أرقام فقط و + و مسافات)
+if (!preg_match('/^[\d\s\+\-]+$/', $phone)) {
+    http_response_code(400);
+    echo json_encode(['success' => false, 'message' => 'رقم الهاتف غير صالح']);
     exit;
 }
 

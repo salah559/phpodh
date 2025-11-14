@@ -9,7 +9,11 @@ if (!isset($_SESSION['cart'])) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title><?php echo isset($page_title) ? $page_title : 'أضحيتي'; ?> - منصة بيع الأغنام والأضاحي</title>
+    <meta name="description" content="منصة أضحيتي - موقع موثوق لشراء الأغنام والأضاحي في الجزائر بجودة عالية وأسعار منافسة. خراف محلية، رومانية وإسبانية.">
+    <meta name="keywords" content="أضحية, خروف, أغنام, عيد الأضحى, الجزائر, خراف للبيع, أضاحي, شراء خروف">
+    <meta name="author" content="أضحيتي">
+    <link rel="icon" type="image/x-icon" href="favicon.ico">
+    <title><?php echo htmlspecialchars(isset($page_title) ? $page_title : 'أضحيتي'); ?> - منصة بيع الأغنام والأضاحي</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.rtl.min.css" rel="stylesheet">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

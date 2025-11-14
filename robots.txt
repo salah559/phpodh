@@ -1,0 +1,16 @@
+# robots.txt لموقع أضحيتي
+
+User-agent: *
+Allow: /
+Disallow: /admin.php
+Disallow: /config/
+Disallow: /api/
+Disallow: /auth/
+Disallow: /includes/
+
+# السماح للصور
+Allow: /css/
+Allow: /js/
+
+# Sitemap (أضف رابط sitemap إذا كان موجوداً)
+# Sitemap: https://odhiyaty.com/sitemap.xml
