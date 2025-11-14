@@ -2,6 +2,17 @@
 session_start();
 require_once __DIR__ . '/../config/database.php';
 
+// IMPORTANT SECURITY NOTE:
+// This is a BASIC implementation for demonstration purposes.
+// For production use, you MUST verify the Firebase ID token on the server side
+// using Firebase Admin SDK or Google's token verification endpoint.
+// Without proper verification, this endpoint can be exploited.
+// 
+// To implement proper verification:
+// 1. Install kreait/firebase-php via Composer
+// 2. Verify the ID token signature before trusting the email
+// 3. See deployment.md for detailed instructions
+
 // تحقق من تسجيل الدخول باستخدام Firebase
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $data = json_decode(file_get_contents('php://input'), true);
@@ -12,9 +23,21 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
+    $idToken = $data['idToken'];
     $email = $data['email'];
     $displayName = $data['displayName'] ?? '';
     $uid = $data['uid'] ?? '';
+    
+    // TODO: Add proper ID token verification here
+    // Example using Google's tokeninfo endpoint:
+    // $url = "https://oauth2.googleapis.com/tokeninfo?id_token=" . $idToken;
+    // $response = file_get_contents($url);
+    // $tokenInfo = json_decode($response, true);
+    // if (!isset($tokenInfo['email']) || $tokenInfo['email'] !== $email) {
+    //     http_response_code(401);
+    //     echo json_encode(['success' => false, 'message' => 'Invalid token']);
+    //     exit;
+    // }
     
     try {
         $pdo = getDBConnection();

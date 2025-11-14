@@ -1,5 +1,16 @@
 # دليل نقل المشروع إلى cPanel
 
+## ⚠️ تنبيه أمني مهم
+
+**يرجى قراءة ملف `SECURITY.md` قبل نشر المشروع على الإنتاج.**
+
+الإعداد الحالي لـ Firebase Auth يحتاج إلى تحسينات أمنية قبل الاستخدام في الإنتاج. راجع `SECURITY.md` لمعرفة:
+- كيفية تأمين Firebase Authentication
+- الحلول الموصى بها (Firebase Admin SDK)
+- البدائل المتاحة (Google Token Verification)
+
+---
+
 ## متطلبات الاستضافة
 
 ### 1. متطلبات الخادم
@@ -14,6 +25,11 @@
 - mbstring
 - json
 - session
+- curl (للتحقق من Firebase tokens)
+
+### 3. أدوات اختيارية (موصى بها للإنتاج)
+- **Composer**: لتثبيت Firebase Admin SDK
+- **SSH Access**: لتشغيل أوامر Composer والـ CLI
 
 ---
 

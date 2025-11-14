@@ -13,14 +13,18 @@
 - ✅ إدارة الطلبات وتتبع الحالة
 - ✅ تصميم متجاوب (Responsive)
 - ✅ واجهة RTL كاملة
+- ✅ **تسجيل الدخول باستخدام Google (Firebase Auth)**
+- ✅ **قاعدة بيانات PostgreSQL مدمجة**
+- ✅ **دعم الاستضافة على cPanel**
 
 ## التقنيات المستخدمة
 
 ### Backend
 - PHP 8.2
-- PostgreSQL Database
+- PostgreSQL Database (Replit Integrated)
 - PDO للاتصال الآمن بقاعدة البيانات
 - Session Management
+- **Firebase Authentication** (Google Sign-In)
 
 ### Frontend
 - HTML5 + CSS3
@@ -40,11 +44,15 @@
 ├── index.php              # الصفحة الرئيسية
 ├── products.php           # صفحة المنتجات
 ├── orders.php             # صفحة الطلبات
-├── admin.php              # لوحة التحكم
+├── admin.php              # لوحة التحكم (مع Firebase Auth)
 ├── config/
 │   ├── database.php       # إعدادات قاعدة البيانات
 │   ├── init_db.php        # إنشاء الجداول
 │   └── seed_data.php      # البيانات التجريبية
+├── auth/
+│   ├── firebase-config.js # إعدادات Firebase
+│   ├── google-signin.php  # معالجة تسجيل الدخول بـ Google
+│   └── logout.php         # تسجيل الخروج
 ├── includes/
 │   ├── header.php         # ترويسة الموقع
 │   └── footer.php         # ذيل الموقع
@@ -53,13 +61,21 @@
 │   └── submit_order.php   # إرسال الطلب
 ├── css/
 │   └── style.css          # التصميم الكامل
-└── js/
-    └── cart.js            # وظائف السلة
+├── js/
+│   └── cart.js            # وظائف السلة
+├── deployment.md          # دليل النقل إلى cPanel
+└── .env.example           # نموذج متغيرات البيئة
 ```
 
 ## بيانات الدخول الافتراضية
 
 ### لوحة التحكم
+
+**خيار 1: تسجيل الدخول بـ Google (Firebase)**
+- البريد الإلكتروني المسموح: `bouazzasalah120120@gmail.com`
+- ملاحظة: يجب إعداد Firebase من Firebase Console أولاً
+
+**خيار 2: تسجيل الدخول التقليدي**
 - **اسم المستخدم**: admin
 - **كلمة المرور**: admin123
 
@@ -74,6 +90,8 @@
 
 ### للمسؤولين
 1. تسجيل الدخول من /admin.php
+   - يمكنك استخدام Google Sign-In (Firebase)
+   - أو استخدام اسم المستخدم وكلمة المرور التقليدية
 2. عرض الإحصائيات من لوحة التحكم
 3. إدارة الأغنام (إضافة/تعديل/حذف)
 4. إدارة الطلبات وتحديث الحالة
@@ -89,16 +107,45 @@
 - **مكتمل (completed)**: تم التسليم
 - **ملغى (cancelled)**: ملغى
 
+## إعداد Firebase (لتفعيل تسجيل الدخول بـ Google)
+
+1. أنشئ مشروع في [Firebase Console](https://console.firebase.google.com)
+2. فعّل Google Authentication من **Authentication > Sign-in method**
+3. احصل على Web Configuration من **Project Settings**
+4. حدّث قيم `firebaseConfig` في ملف `admin.php`
+5. راجع ملف `deployment.md` للتفاصيل الكاملة
+
+## الاستضافة على cPanel
+
+راجع ملف `deployment.md` للحصول على دليل شامل لنقل المشروع إلى cPanel، بما في ذلك:
+- إعداد PostgreSQL
+- تكوين Firebase
+- إعدادات SSL
+- استكشاف الأخطاء
+
 ## التطويرات المستقبلية
-- تكامل Firebase Admin SDK للمصادقة المتقدمة
 - نظام تحميل الصور المتعددة
 - تتبع حالة الطلبات للعملاء
 - إحصائيات ورسوم بيانية متقدمة
-- تكامل مع خدمات الدفع الإلكتروني الجزائرية
+- تكامل مع خدمات الدفع الإلكتروني الجزائرية (CIB، Dahabia)
 - نظام إشعارات للطلبات الجديدة
+- تطبيق موبايل (Android/iOS)
 
 ## آخر التحديثات
-- 2024-11-14: إطلاق النسخة الأولى من المنصة
-- إضافة 6 منتجات تجريبية
-- إعداد لوحة تحكم كاملة
-- دعم قاعدة بيانات PostgreSQL
+
+### 14 نوفمبر 2024
+- ✅ **إضافة Firebase Google Authentication**
+  - تسجيل الدخول بواسطة Google في لوحة التحكم
+  - إضافة bouazzasalah120120@gmail.com كمدير رئيسي
+- ✅ **ربط قاعدة بيانات PostgreSQL مدمجة**
+  - إنشاء الجداول (sheep, orders, admins)
+  - إضافة 6 منتجات تجريبية
+- ✅ **إنشاء دليل النقل إلى cPanel**
+  - تعليمات مفصلة للاستضافة
+  - إعدادات Firebase و PostgreSQL
+  - استكشاف الأخطاء
+- ✅ **إطلاق النسخة الأولى من المنصة**
+  - صفحة رئيسية جذابة
+  - لوحة تحكم إدارية كاملة
+  - نظام سلة التسوق
+  - دعم الولايات الجزائرية
