@@ -1,12 +1,12 @@
 // Firebase Configuration
 // قم بتحديث هذه القيم من Firebase Console > Project Settings
 const firebaseConfig = {
-    apiKey: "YOUR_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.appspot.com",
-    messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyANVd7qWQcg5IBonIdQgbBZDAvXT049RkQ",
+    authDomain: "oudhiyaty.firebaseapp.com",
+    projectId: "oudhiyaty",
+    storageBucket: "oudhiyaty.firebasestorage.app",
+    messagingSenderId: "204852763681",
+    appId: "1:204852763681:web:ae3cfef9d44edf949ad760"
 };
 
 // Initialize Firebase

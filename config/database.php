@@ -7,7 +7,7 @@ $db_url = getenv('DATABASE_URL');
 if ($db_url) {
     // بيئة Replit - استخدام DATABASE_URL
     $db = parse_url($db_url);
-    
+
     define('DB_HOST', $db['host'] ?? 'localhost');
     define('DB_USER', $db['user'] ?? 'root');
     define('DB_PASS', $db['pass'] ?? '');
@@ -17,10 +17,10 @@ if ($db_url) {
     // بيئة cPanel - إعدادات قاعدة البيانات
     // ⚠️ مهم: قم بتحديث هذه القيم بمعلومات قاعدة البيانات الخاصة بك
     // لا ترفع هذا الملف إلى Git أو أي مستودع عام
-    define('DB_HOST', '127.0.0.1');  // استخدام IPv4 بدلاً من localhost
-    define('DB_USER', 'your_database_user');  // ⚠️ غيّر هذا
-    define('DB_PASS', 'your_database_password');  // ⚠️ غيّر هذا  
-    define('DB_NAME', 'your_database_name');  // ⚠️ غيّر هذا
+    define('DB_HOST', 'localhost');  // استخدام IPv4 بدلاً من localhost
+    define('DB_USER', 'ctdccyqq_salah');  // ⚠️ غيّر هذا
+    define('DB_PASS', 'silo@salah55');  // ⚠️ غيّر هذا  
+    define('DB_NAME', 'ctdccyqq_sheep_marketplace');  // ⚠️ غيّر هذا
     define('DB_PORT', '5432');
 }
 
