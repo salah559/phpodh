@@ -74,6 +74,18 @@ if (!$isLoggedIn):
                         <div class="alert alert-danger"><?php echo $loginError; ?></div>
                         <?php endif; ?>
                         
+                        <!-- تسجيل الدخول بواسطة Google -->
+                        <div class="mb-3">
+                            <button type="button" id="googleSignInBtn" class="btn btn-light w-100 border">
+                                <img src="https://www.gstatic.com/firebasejs/ui/2.0.0/images/auth/google.svg" width="20" height="20" class="me-2">
+                                تسجيل الدخول بواسطة Google
+                            </button>
+                        </div>
+                        
+                        <div class="text-center my-3">
+                            <small class="text-muted">أو</small>
+                        </div>
+                        
                         <form method="POST">
                             <input type="hidden" name="csrf_token" value="<?php echo $_SESSION['csrf_token']; ?>">
                             <div class="mb-3">
@@ -92,11 +104,70 @@ if (!$isLoggedIn):
                         <div class="text-center mt-3">
                             <small class="text-muted">المستخدم الافتراضي: admin / admin123</small>
                         </div>
+                        
+                        <div id="loginMessage" class="mt-3"></div>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    
+    <!-- Firebase Scripts -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+        import { getAuth, signInWithPopup, GoogleAuthProvider } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+        
+        // قم بتحديث هذه القيم من Firebase Console
+        const firebaseConfig = {
+            apiKey: "YOUR_API_KEY",
+            authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+            projectId: "YOUR_PROJECT_ID",
+            storageBucket: "YOUR_PROJECT_ID.appspot.com",
+            messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
+            appId: "YOUR_APP_ID"
+        };
+        
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const provider = new GoogleAuthProvider();
+        
+        document.getElementById('googleSignInBtn').addEventListener('click', async () => {
+            try {
+                const result = await signInWithPopup(auth, provider);
+                const user = result.user;
+                const idToken = await user.getIdToken();
+                
+                // إرسال البيانات إلى الخادم للتحقق
+                const response = await fetch('/auth/google-signin.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        idToken: idToken,
+                        email: user.email,
+                        displayName: user.displayName,
+                        uid: user.uid
+                    })
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    // نجح تسجيل الدخول
+                    window.location.href = 'admin.php';
+                } else {
+                    // فشل تسجيل الدخول
+                    document.getElementById('loginMessage').innerHTML = 
+                        '<div class="alert alert-danger">' + data.message + '</div>';
+                }
+            } catch (error) {
+                console.error('خطأ في تسجيل الدخول:', error);
+                document.getElementById('loginMessage').innerHTML = 
+                    '<div class="alert alert-danger">حدث خطأ في تسجيل الدخول. الرجاء المحاولة مرة أخرى.</div>';
+            }
+        });
+    </script>
 </body>
 </html>
 <?php
