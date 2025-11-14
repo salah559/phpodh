@@ -14,12 +14,12 @@ if ($db_url) {
     define('DB_NAME', ltrim($db['path'] ?? '/adhiyati_db', '/'));
     define('DB_PORT', $db['port'] ?? '5432');
 } else {
-    // بيئة cPanel أو استضافة أخرى - عدل هذه القيم
-    define('DB_HOST', 'localhost');  // مثال: localhost أو عنوان IP
-    define('DB_USER', 'your_db_user');  // اسم مستخدم قاعدة البيانات من cPanel
-    define('DB_PASS', 'your_db_password');  // كلمة المرور من cPanel
-    define('DB_NAME', 'your_db_name');  // اسم قاعدة البيانات من cPanel
-    define('DB_PORT', '5432');  // المنفذ (5432 لـ PostgreSQL أو 3306 لـ MySQL)
+    // بيئة cPanel - إعدادات قاعدة البيانات
+    define('DB_HOST', 'localhost');
+    define('DB_USER', 'ctdccyqq_salah');
+    define('DB_PASS', 'silo@salah55');
+    define('DB_NAME', 'ctdccyqq_odh');
+    define('DB_PORT', '5432');
 }
 
 function getDBConnection() {
