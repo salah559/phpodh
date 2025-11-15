@@ -99,26 +99,105 @@
     <!-- Hero Section -->
     <section class="hero">
         <div class="container text-center">
-            <h1>مرحباً بك في غنيمي</h1>
-            <p>أفضل منصة لبيع وشراء الأغنام في الجزائر</p>
-            <a href="/pages/products.html" class="btn btn-secondary">تصفح المنتجات</a>
+            <h1>اختر أضحيتك المثالية</h1>
+            <p>منصة موثوقة لشراء الأغنام والأضاحي بجودة عالية وأسعار منافسة</p>
+            <div style="display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; margin-top: 2rem;">
+                <a href="/pages/products.html" class="btn btn-secondary">تصفح المنتجات</a>
+                <a href="#about" class="btn" style="background: transparent; border: 2px solid white; color: white;">تعرف علينا</a>
+            </div>
+        </div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="container" style="margin-bottom: 3rem; margin-top: -2rem;">
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">جودة مضمونة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">24/7</div>
+                <div class="stat-label">أمان وثقة</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">أفضل</div>
+                <div class="stat-label">أسعار تنافسية</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number">عالي</div>
+                <div class="stat-label">رضا العملاء</div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Categories Section -->
+    <section class="container" style="margin-bottom: 3rem;">
+        <h2 class="text-center mb-4">تصفح حسب الفئة</h2>
+        <div class="categories-grid">
+            <a href="/pages/products.html?category=محلي" class="category-card">
+                <img src="https://odhiyati.vercel.app/assets/Ram_category_image_2f96bd41-Ch8-xQrR.png" alt="محلي">
+                <h3>محلي</h3>
+            </a>
+            <a href="/pages/products.html?category=روماني" class="category-card">
+                <img src="https://odhiyati.vercel.app/assets/Ewe_category_image_5444fe06-DudQOTjE.png" alt="روماني">
+                <h3>روماني</h3>
+            </a>
+            <a href="/pages/products.html?category=إسباني" class="category-card">
+                <img src="https://odhiyati.vercel.app/assets/Lamb_category_image_decc492a-DyG2-FgX.png" alt="إسباني">
+                <h3>إسباني</h3>
+            </a>
         </div>
     </section>
 
     <!-- Featured Products -->
-    <section class="container">
-        <h2 class="text-center mb-4">المنتجات المميزة</h2>
+    <section class="container" style="margin-bottom: 3rem;">
+        <h2 class="text-center mb-4">منتجات مميزة</h2>
         
         <div id="loading" class="spinner"></div>
         <div id="featured-products" class="product-grid"></div>
         <div id="error-message" class="text-center" style="display: none; color: var(--destructive);"></div>
     </section>
 
+    <!-- Special Offers -->
+    <section class="container" style="margin-bottom: 3rem;">
+        <h2 class="text-center mb-4">عروض خاصة</h2>
+        <div id="loading-offers" class="spinner"></div>
+        <div id="special-offers" class="product-grid"></div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features-section">
+        <div class="container">
+            <div class="features-grid">
+                <div class="feature-card">
+                    <div class="feature-icon">✓</div>
+                    <h3>جودة مضمونة</h3>
+                    <p>جميع منتجاتنا مفحوصة ومضمونة الجودة</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🚚</div>
+                    <h3>توصيل سريع</h3>
+                    <p>خدمة توصيل سريعة وموثوقة</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">🏆</div>
+                    <h3>شهادة حلال</h3>
+                    <p>جميع الأغنام مطابقة للمواصفات الشرعية</p>
+                </div>
+                <div class="feature-card">
+                    <div class="feature-icon">💬</div>
+                    <h3>خدمة عملاء ممتازة</h3>
+                    <p>فريق دعم متاح على مدار الساعة</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
     <!-- Footer -->
     <footer>
         <div class="footer-content">
             <h3>غنيمي</h3>
-            <p>أفضل منصة لبيع وشراء الأغنام في الجزائر</p>
+            <p>منصة موثوقة لشراء الأغنام والأضاحي بجودة عالية وأسعار منافسة</p>
             <p style="margin-top: 1rem; color: var(--muted-foreground);">
                 &copy; 2024 جميع الحقوق محفوظة
             </p>
@@ -131,6 +210,14 @@
     <script>
         let allSheep = [];
         
+        function addToAllSheep(sheep) {
+            sheep.forEach(item => {
+                if (!allSheep.find(s => s.id === item.id)) {
+                    allSheep.push(item);
+                }
+            });
+        }
+        
         async function loadFeaturedProducts() {
             const loading = document.getElementById('loading');
             const container = document.getElementById('featured-products');
@@ -142,7 +229,7 @@
                 
                 // Load featured sheep
                 const sheep = await SheepAPI.getAll({ featured: 'true' });
-                allSheep = sheep;
+                addToAllSheep(sheep);
                 
                 if (sheep.length === 0) {
                     container.innerHTML = '<p class="text-center">لا توجد منتجات مميزة حالياً</p>';
@@ -156,6 +243,33 @@
                 loading.style.display = 'none';
                 errorMessage.textContent = 'فشل تحميل المنتجات. يرجى المحاولة لاحقاً.';
                 errorMessage.style.display = 'block';
+            }
+        }
+        
+        async function loadSpecialOffers() {
+            const loading = document.getElementById('loading-offers');
+            const container = document.getElementById('special-offers');
+            
+            try {
+                loading.style.display = 'block';
+                
+                // Load sheep with discounts
+                const allProducts = await SheepAPI.getAll();
+                const offers = allProducts.filter(s => s.discountPercentage && s.discountPercentage > 0);
+                
+                // Add offers to allSheep array for cart functionality
+                addToAllSheep(offers);
+                
+                if (offers.length === 0) {
+                    container.innerHTML = '<p class="text-center">لا توجد عروض خاصة حالياً</p>';
+                } else {
+                    container.innerHTML = offers.slice(0, 4).map(renderSheepCard).join('');
+                }
+                
+                loading.style.display = 'none';
+            } catch (error) {
+                console.error('Error loading offers:', error);
+                loading.style.display = 'none';
             }
         }
         
@@ -219,6 +333,7 @@
         // Load products on page load
         document.addEventListener('DOMContentLoaded', () => {
             loadFeaturedProducts();
+            loadSpecialOffers();
         });
     </script>
 </body>
