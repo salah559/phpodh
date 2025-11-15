@@ -1,13 +1,4 @@
-<?php
-// Database configuration for Replit environment
-// Using SQLite for easy setup
-
-define('DB_TYPE', 'sqlite');
-define('DB_PATH', __DIR__ . '/database.sqlite');
-
-// These are not used for SQLite but kept for compatibility
-define('DB_HOST', '');
-define('DB_USER', '');
-define('DB_PASS', '');
-define('DB_NAME', '');
-?>
+define('DB_HOST', 'local');
+define('DB_USER', 'ctdccyqq_salah');
+define('DB_PASS', 'silo@salah55');
+define('DB_NAME', 'ctdccyqq_sheep_marketplace');
