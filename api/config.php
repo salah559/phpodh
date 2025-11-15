@@ -47,6 +47,8 @@ function getDbConnection() {
             if (defined('DB_TYPE') && DB_TYPE === 'sqlite') {
                 $dsn = "sqlite:" . DB_PATH;
                 $conn = new PDO($dsn);
+                // Enable foreign key constraints for SQLite
+                $conn->exec('PRAGMA foreign_keys = ON');
             } else {
                 $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
                 $conn = new PDO($dsn, DB_USER, DB_PASS);
