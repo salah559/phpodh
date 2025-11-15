@@ -4,7 +4,7 @@ const API_BASE_URL = window.location.origin + '/api';
 // Helper function for API calls
 async function apiCall(endpoint, options = {}) {
     const url = `${API_BASE_URL}/${endpoint}`;
-    
+
     // Get Firebase ID token if user is authenticated
     let idToken = null;
     if (window.firebaseAuth && window.firebaseAuth.getCurrentUser()) {
@@ -18,7 +18,7 @@ async function apiCall(endpoint, options = {}) {
             console.error('Error getting ID token:', error);
         }
     }
-    
+
     const config = {
         headers: {
             'Content-Type': 'application/json',
@@ -28,11 +28,11 @@ async function apiCall(endpoint, options = {}) {
         credentials: 'include',
         ...options
     };
-    
+
     try {
         const response = await fetch(url, config);
         const data = await response.json();
-        
+
         if (!response.ok) {
             if (response.status === 401) {
                 // Redirect to login if unauthorized
@@ -43,7 +43,7 @@ async function apiCall(endpoint, options = {}) {
             }
             throw new Error(data.error || 'حدث خطأ في الطلب');
         }
-        
+
         return data;
     } catch (error) {
         console.error('API Error:', error);
@@ -57,25 +57,25 @@ const SheepAPI = {
         const params = new URLSearchParams(filters);
         return await apiCall(`sheep.php?${params}`);
     },
-    
+
     getById: async (id) => {
         return await apiCall(`sheep.php/${id}`);
     },
-    
+
     create: async (data) => {
         return await apiCall('sheep.php', {
             method: 'POST',
             body: JSON.stringify(data)
         });
     },
-    
+
     update: async (id, data) => {
         return await apiCall(`sheep.php/${id}`, {
             method: 'PUT',
             body: JSON.stringify(data)
         });
     },
-    
+
     delete: async (id) => {
         return await apiCall(`sheep.php/${id}`, {
             method: 'DELETE'
@@ -89,18 +89,18 @@ const OrdersAPI = {
         const params = new URLSearchParams(filters);
         return await apiCall(`orders.php?${params}`);
     },
-    
+
     getById: async (id) => {
         return await apiCall(`orders.php/${id}`);
     },
-    
+
     create: async (data) => {
         return await apiCall('orders.php', {
             method: 'POST',
             body: JSON.stringify(data)
         });
     },
-    
+
     updateStatus: async (id, status) => {
         return await apiCall(`orders.php/${id}`, {
             method: 'PUT',
@@ -114,18 +114,18 @@ const AdminsAPI = {
     getAll: async () => {
         return await apiCall('admins.php');
     },
-    
+
     checkAdmin: async (email) => {
         return await apiCall(`admins.php?email=${encodeURIComponent(email)}`);
     },
-    
+
     add: async (email, role = 'secondary') => {
         return await apiCall('admins.php', {
             method: 'POST',
             body: JSON.stringify({ email, role })
         });
     },
-    
+
     remove: async (email) => {
         return await apiCall('admins.php', {
             method: 'DELETE',
@@ -140,16 +140,16 @@ const Cart = {
         const cart = localStorage.getItem('cart');
         return cart ? JSON.parse(cart) : [];
     },
-    
+
     set: (items) => {
         localStorage.setItem('cart', JSON.stringify(items));
         updateCartBadge();
     },
-    
+
     add: (sheep, quantity = 1) => {
         const cart = Cart.get();
         const existing = cart.find(item => item.sheepId === sheep.id);
-        
+
         if (existing) {
             existing.quantity += quantity;
         } else {
@@ -161,24 +161,24 @@ const Cart = {
                 quantity
             });
         }
-        
+
         Cart.set(cart);
         showToast('تم الإضافة إلى السلة');
     },
-    
+
     remove: (sheepId) => {
         const cart = Cart.get().filter(item => item.sheepId !== sheepId);
         Cart.set(cart);
     },
-    
+
     clear: () => {
         Cart.set([]);
     },
-    
+
     getTotal: () => {
         return Cart.get().reduce((total, item) => total + (item.price * item.quantity), 0);
     },
-    
+
     getCount: () => {
         return Cart.get().reduce((count, item) => count + item.quantity, 0);
     }
@@ -212,9 +212,9 @@ function showToast(message, type = 'success') {
         z-index: 1000;
         animation: slideDown 0.3s ease-out;
     `;
-    
+
     document.body.appendChild(toast);
-    
+
     setTimeout(() => {
         toast.style.animation = 'slideUp 0.3s ease-out';
         setTimeout(() => toast.remove(), 300);
