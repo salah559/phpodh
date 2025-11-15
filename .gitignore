@@ -1,0 +1,23 @@
+# Database files
+database.sqlite
+database.sqlite-journal
+*.db
+*.db-journal
+
+# Configuration files with sensitive data
+config.local.php
+
+# PHP
+vendor/
+composer.lock
+
+# System files
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
