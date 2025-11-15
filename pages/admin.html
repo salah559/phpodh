@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>لوحة التحكم - سوق الأغنام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <style>
+        .admin-tabs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 2rem;
+            border-bottom: 2px solid var(--border);
+        }
+        
+        .admin-tab {
+            padding: 0.75rem 1.5rem;
+            background: none;
+            border: none;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            color: var(--muted-foreground);
+            border-bottom: 3px solid transparent;
+        }
+        
+        .admin-tab.active {
+            color: var(--primary);
+            border-bottom-color: var(--primary);
+        }
+        
+        .admin-section {
+            display: none;
+        }
+        
+        .admin-section.active {
+            display: block;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        
+        .stat-card {
+            background: var(--card);
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            border: 1px solid var(--border);
+        }
+        
+        .stat-value {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .stat-label {
+            color: var(--muted-foreground);
+            margin-top: 0.5rem;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th,
+        .table td {
+            padding: 1rem;
+            text-align: right;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .table th {
+            background: var(--muted);
+            font-weight: 600;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            font-weight: 600;
+        }
+        
+        .status-pending { background: #fef3c7; color: #92400e; }
+        .status-processing { background: #dbeafe; color: #1e40af; }
+        .status-completed { background: #d1fae5; color: #065f46; }
+        .status-cancelled { background: #fee2e2; color: #991b1b; }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="flex justify-between items-center">
+                <a href="/" class="logo">🐑 سوق الأغنام</a>
+                <ul class="nav-links">
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/products.html">المنتجات</a></li>
+                    <li><a href="/pages/admin.html">لوحة التحكم</a></li>
+                </ul>
+                <div class="user-menu">
+                    <span id="user-display"></span>
+                    <button id="logout-btn" class="btn btn-outline" onclick="handleLogout()">تسجيل الخروج</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem;">
+        <h1>لوحة التحكم الإدارية</h1>
+        
+        <div id="unauthorized" style="display: none; text-align: center; padding: 4rem 0;">
+            <h2>غير مصرح</h2>
+            <p>ليس لديك صلاحية الوصول إلى لوحة التحكم</p>
+            <a href="/" class="btn btn-primary">العودة للرئيسية</a>
+        </div>
+        
+        <div id="admin-content" style="display: none;">
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value" id="total-sheep">0</div>
+                    <div class="stat-label">إجمالي المنتجات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="total-orders">0</div>
+                    <div class="stat-label">إجمالي الطلبات</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value" id="pending-orders">0</div>
+                    <div class="stat-label">طلبات معلقة</div>
+                </div>
+            </div>
+            
+            <!-- Tabs -->
+            <div class="admin-tabs">
+                <button class="admin-tab active" onclick="switchAdminTab('products')">المنتجات</button>
+                <button class="admin-tab" onclick="switchAdminTab('orders')">الطلبات</button>
+            </div>
+            
+            <!-- Products Section -->
+            <div id="products-section" class="admin-section active">
+                <div class="flex justify-between items-center mb-4">
+                    <h2>إدارة المنتجات</h2>
+                    <button class="btn btn-primary" onclick="window.location.href='/pages/add-product.html'">
+                        إضافة منتج جديد
+                    </button>
+                </div>
+                
+                <div class="card">
+                    <div id="products-table"></div>
+                </div>
+            </div>
+            
+            <!-- Orders Section -->
+            <div id="orders-section" class="admin-section">
+                <h2 class="mb-4">إدارة الطلبات</h2>
+                
+                <div class="card">
+                    <div id="orders-table"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/firebase-config.js"></script>
+    <script>
+        let products = [];
+        let orders = [];
+        
+        async function checkAuth() {
+            // Wait for Firebase to initialize
+            await new Promise(resolve => setTimeout(resolve, 1500));
+            
+            const user = window.firebaseAuth?.getCurrentUser();
+            const isAdmin = window.firebaseAuth?.isAdmin();
+            
+            if (!user || !isAdmin) {
+                document.getElementById('unauthorized').style.display = 'block';
+                document.getElementById('admin-content').style.display = 'none';
+                return false;
+            }
+            
+            document.getElementById('unauthorized').style.display = 'none';
+            document.getElementById('admin-content').style.display = 'block';
+            return true;
+        }
+        
+        async function loadDashboard() {
+            const authorized = await checkAuth();
+            if (!authorized) return;
+            
+            try {
+                // Load products
+                products = await SheepAPI.getAll();
+                document.getElementById('total-sheep').textContent = products.length;
+                
+                // Load orders
+                orders = await OrdersAPI.getAll();
+                document.getElementById('total-orders').textContent = orders.length;
+                
+                const pendingOrders = orders.filter(o => o.status === 'pending').length;
+                document.getElementById('pending-orders').textContent = pendingOrders;
+                
+                displayProducts();
+                displayOrders();
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+                showToast('فشل تحميل البيانات', 'error');
+            }
+        }
+        
+        function switchAdminTab(tab) {
+            document.querySelectorAll('.admin-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            document.querySelectorAll('.admin-section').forEach(s => s.classList.remove('active'));
+            document.getElementById(tab + '-section').classList.add('active');
+        }
+        
+        function displayProducts() {
+            const container = document.getElementById('products-table');
+            
+            if (products.length === 0) {
+                container.innerHTML = '<p class="text-center p-4">لا توجد منتجات</p>';
+                return;
+            }
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>الصورة</th>
+                            <th>الاسم</th>
+                            <th>الفئة</th>
+                            <th>السعر</th>
+                            <th>مميز</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${products.map(p => `
+                            <tr>
+                                <td><img src="${p.images[0]}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 0.5rem;"></td>
+                                <td>${p.name}</td>
+                                <td>${p.category}</td>
+                                <td>${formatPrice(p.price)}</td>
+                                <td>${p.isFeatured ? '✓' : '✗'}</td>
+                                <td>
+                                    <button class="btn btn-destructive" style="padding: 0.5rem 1rem;" onclick="deleteProduct('${p.id}')">
+                                        حذف
+                                    </button>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function displayOrders() {
+            const container = document.getElementById('orders-table');
+            
+            if (orders.length === 0) {
+                container.innerHTML = '<p class="text-center p-4">لا توجد طلبات</p>';
+                return;
+            }
+            
+            const statusLabels = {
+                pending: 'معلق',
+                processing: 'قيد المعالجة',
+                completed: 'مكتمل',
+                cancelled: 'ملغي'
+            };
+            
+            container.innerHTML = `
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>رقم الطلب</th>
+                            <th>العميل</th>
+                            <th>المبلغ</th>
+                            <th>الحالة</th>
+                            <th>التاريخ</th>
+                            <th>الإجراءات</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${orders.map(o => `
+                            <tr>
+                                <td>${o.id.substring(0, 8)}...</td>
+                                <td>${o.userName}</td>
+                                <td>${formatPrice(o.totalAmount)}</td>
+                                <td><span class="status-badge status-${o.status}">${statusLabels[o.status]}</span></td>
+                                <td>${new Date(o.createdAt).toLocaleDateString('ar-DZ')}</td>
+                                <td>
+                                    <select onchange="updateOrderStatus('${o.id}', this.value)" style="padding: 0.5rem; border-radius: 0.5rem;">
+                                        <option value="">تغيير الحالة</option>
+                                        <option value="pending">معلق</option>
+                                        <option value="processing">قيد المعالجة</option>
+                                        <option value="completed">مكتمل</option>
+                                        <option value="cancelled">ملغي</option>
+                                    </select>
+                                </td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        async function deleteProduct(id) {
+            if (!confirm('هل أنت متأكد من حذف هذا المنتج؟')) return;
+            
+            try {
+                await SheepAPI.delete(id);
+                showToast('تم حذف المنتج بنجاح');
+                loadDashboard();
+            } catch (error) {
+                console.error('Error deleting product:', error);
+                showToast('فشل حذف المنتج', 'error');
+            }
+        }
+        
+        async function updateOrderStatus(orderId, newStatus) {
+            if (!newStatus) return;
+            
+            try {
+                await OrdersAPI.updateStatus(orderId, newStatus);
+                showToast('تم تحديث حالة الطلب');
+                loadDashboard();
+            } catch (error) {
+                console.error('Error updating order:', error);
+                showToast('فشل تحديث الطلب', 'error');
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                await window.firebaseAuth.signOut();
+                window.location.href = '/';
+            } catch (error) {
+                showToast('فشل تسجيل الخروج', 'error');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>

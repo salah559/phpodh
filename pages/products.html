@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>المنتجات - سوق الأغنام</title>
+    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/assets/css/main.css">
+</head>
+<body>
+    <header>
+        <div class="container">
+            <nav class="flex justify-between items-center">
+                <a href="/" class="logo">🐑 سوق الأغنام</a>
+                <ul class="nav-links">
+                    <li><a href="/">الرئيسية</a></li>
+                    <li><a href="/pages/products.html">المنتجات</a></li>
+                    <li><a href="/pages/cart.html" style="position: relative;">
+                        السلة
+                        <span id="cart-badge" class="cart-badge" style="display: none;">0</span>
+                    </a></li>
+                    <li id="admin-link" style="display: none;"><a href="/pages/admin.html">لوحة التحكم</a></li>
+                </ul>
+                <div class="user-menu">
+                    <span id="user-display"></span>
+                    <button id="login-btn" class="btn btn-primary" onclick="window.location.href='/pages/login.html'">تسجيل الدخول</button>
+                    <button id="logout-btn" class="btn btn-outline" style="display: none;" onclick="handleLogout()">تسجيل الخروج</button>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <div class="container" style="margin-top: 2rem;">
+        <h1>جميع المنتجات</h1>
+        
+        <div class="filter-section">
+            <div class="filters">
+                <div>
+                    <label for="category-filter" class="form-label">الفئة:</label>
+                    <select id="category-filter" class="form-select" onchange="applyFilters()">
+                        <option value="">الكل</option>
+                        <option value="محلي">محلي</option>
+                        <option value="روماني">روماني</option>
+                        <option value="إسباني">إسباني</option>
+                    </select>
+                </div>
+                <div>
+                    <label>
+                        <input type="checkbox" id="featured-filter" onchange="applyFilters()">
+                        المميزة فقط
+                    </label>
+                </div>
+            </div>
+        </div>
+        
+        <div id="loading" class="spinner"></div>
+        <div id="products-grid" class="product-grid"></div>
+        <div id="error-message" class="text-center" style="display: none; color: var(--destructive);"></div>
+    </div>
+
+    <footer>
+        <div class="footer-content">
+            <h3>سوق الأغنام</h3>
+            <p>&copy; 2024 جميع الحقوق محفوظة</p>
+        </div>
+    </footer>
+
+    <script src="/assets/js/api.js"></script>
+    <script src="/assets/js/firebase-config.js"></script>
+    <script>
+        let allSheep = [];
+        
+        async function loadProducts() {
+            const loading = document.getElementById('loading');
+            const container = document.getElementById('products-grid');
+            const errorMessage = document.getElementById('error-message');
+            
+            try {
+                loading.style.display = 'block';
+                errorMessage.style.display = 'none';
+                
+                const sheep = await SheepAPI.getAll();
+                allSheep = sheep;
+                
+                applyFilters();
+                loading.style.display = 'none';
+            } catch (error) {
+                console.error('Error loading products:', error);
+                loading.style.display = 'none';
+                errorMessage.textContent = 'فشل تحميل المنتجات';
+                errorMessage.style.display = 'block';
+            }
+        }
+        
+        function applyFilters() {
+            const category = document.getElementById('category-filter').value;
+            const featuredOnly = document.getElementById('featured-filter').checked;
+            
+            let filtered = allSheep;
+            
+            if (category) {
+                filtered = filtered.filter(s => s.category === category);
+            }
+            
+            if (featuredOnly) {
+                filtered = filtered.filter(s => s.isFeatured);
+            }
+            
+            displayProducts(filtered);
+        }
+        
+        function displayProducts(sheep) {
+            const container = document.getElementById('products-grid');
+            
+            if (sheep.length === 0) {
+                container.innerHTML = '<p class="text-center">لا توجد منتجات</p>';
+                return;
+            }
+            
+            container.innerHTML = sheep.map(renderSheepCard).join('');
+        }
+        
+        function renderSheepCard(sheep) {
+            const price = sheep.discountPercentage 
+                ? sheep.price * (1 - sheep.discountPercentage / 100)
+                : sheep.price;
+            
+            return `
+                <div class="product-card">
+                    <img src="${sheep.images[0] || '/assets/images/placeholder.jpg'}" 
+                         alt="${sheep.name}" 
+                         class="product-image">
+                    <div class="product-info">
+                        <h3 class="product-title">${sheep.name}</h3>
+                        <div class="mb-2">
+                            <span class="product-badge badge-category">${sheep.category}</span>
+                            ${sheep.isFeatured ? '<span class="product-badge badge-featured">مميز</span>' : ''}
+                        </div>
+                        <p style="color: var(--muted-foreground); margin-bottom: 0.5rem;">
+                            ${sheep.breed} • ${sheep.age} • ${sheep.weight}
+                        </p>
+                        <p style="color: var(--muted-foreground); font-size: 0.875rem; margin-bottom: 1rem;">
+                            ${sheep.description.substring(0, 80)}...
+                        </p>
+                        <div class="flex justify-between items-center">
+                            <div>
+                                <div class="product-price">${formatPrice(price)}</div>
+                                ${sheep.discountPercentage ? `
+                                    <div style="text-decoration: line-through; color: var(--muted-foreground); font-size: 0.875rem;">
+                                        ${formatPrice(sheep.price)}
+                                    </div>
+                                ` : ''}
+                            </div>
+                            <button class="btn btn-primary" onclick="addToCart('${sheep.id}')">
+                                إضافة للسلة
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function addToCart(sheepId) {
+            const sheep = allSheep.find(s => s.id === sheepId);
+            if (sheep) {
+                Cart.add(sheep, 1);
+            }
+        }
+        
+        async function handleLogout() {
+            try {
+                if (window.firebaseAuth) {
+                    await window.firebaseAuth.signOut();
+                    showToast('تم تسجيل الخروج بنجاح');
+                    window.location.reload();
+                }
+            } catch (error) {
+                showToast('فشل تسجيل الخروج', 'error');
+            }
+        }
+        
+        document.addEventListener('DOMContentLoaded', loadProducts);
+    </script>
+</body>
+</html>
