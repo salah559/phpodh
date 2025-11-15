@@ -1,11 +1,11 @@
 // Firebase configuration
 // ⚠️ يجب تحديث هذه القيم بمفاتيح Firebase الخاصة بك
 const firebaseConfig = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    storageBucket: "YOUR_PROJECT_ID.firebasestorage.app",
-    appId: "YOUR_FIREBASE_APP_ID"
+    apiKey: "AIzaSyANVd7qWQcg5IBonIdQgbBZDAvXT049RkQ",
+    authDomain: "oudhiyaty.firebaseapp.com",
+    projectId: "oudhiyaty",
+    storageBucket: "oudhiyaty.firebasestorage.app",
+    appId: "1:204852763681:web:ae3cfef9d44edf949ad760"
 };
 
 // Initialize Firebase
