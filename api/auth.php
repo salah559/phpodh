@@ -30,7 +30,17 @@ function requireAuth() {
         exit();
     }
 
-    return true;
+    // Get email from request header (sent by client after Firebase auth)
+    $headers = getallheaders();
+    $email = $headers['X-User-Email'] ?? null;
+
+    if (!$email) {
+        http_response_code(401);
+        echo json_encode(['error' => 'User email required'], JSON_UNESCAPED_UNICODE);
+        exit();
+    }
+
+    return ['email' => $email];
 }
 
 // Require admin authentication

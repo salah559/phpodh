@@ -5,14 +5,18 @@ const API_BASE_URL = window.location.origin + '/api';
 async function apiCall(endpoint, options = {}) {
     const url = `${API_BASE_URL}/${endpoint}`;
 
-    // Get Firebase ID token if user is authenticated
+    // Get Firebase ID token and user email if user is authenticated
     let idToken = null;
+    let userEmail = null;
     if (window.firebaseAuth && window.firebaseAuth.getCurrentUser()) {
         try {
             // Get ID token from current user
             const user = window.firebaseAuth.getCurrentUser();
-            if (user && user.getIdToken) {
-                idToken = await user.getIdToken(true); // Force refresh
+            if (user) {
+                if (user.getIdToken) {
+                    idToken = await user.getIdToken(true); // Force refresh
+                }
+                userEmail = user.email;
             }
         } catch (error) {
             console.error('Error getting ID token:', error);
@@ -23,6 +27,7 @@ async function apiCall(endpoint, options = {}) {
         headers: {
             'Content-Type': 'application/json',
             ...(idToken && { 'Authorization': `Bearer ${idToken}` }),
+            ...(userEmail && { 'X-User-Email': userEmail }),
             ...options.headers
         },
         credentials: 'include',
