@@ -37,24 +37,24 @@ A sheep marketplace web application built with PHP, SQLite, and Firebase Authent
 └── database.sqlite        # SQLite database
 ```
 
-## Recent Changes (Replit Setup)
-**Date**: November 15, 2025
+## Recent Changes
 
-### Database Migration
+### Homepage Redesign (November 15, 2025)
+- **Updated Hero Section**: Changed headline to "اختر أضحيتك المثالية" to match target design
+- **Added Stats Section**: Four-stat display showing quality guarantees, trust metrics, pricing advantages, and customer satisfaction
+- **Enhanced Category Navigation**: Added visual category cards with images for محلي, روماني, and إسباني categories
+- **New Special Offers Section**: Dedicated section displaying discounted products
+- **Refreshed Features Section**: Updated bottom features highlighting quality assurance, fast delivery, halal certification, and customer service
+- **CSS Enhancements**: Added responsive styles for stats-grid, categories-grid, and features-section
+- **Fixed Cart Functionality**: Implemented shared product cache (`addToAllSheep`) to ensure cart buttons work across all sections
+
+### Replit Setup (November 15, 2025)
 - Converted from MySQL to SQLite for Replit compatibility
 - Created SQLite schema in `api/setup_sqlite.sql`
 - Updated `api/config.php` to support both MySQL and SQLite
 - Database is created at project root as `database.sqlite`
-
-### CORS Configuration
 - Updated CORS settings to allow all origins (required for Replit webview)
-- The webview runs on dynamic domains, so wildcard CORS is necessary in development
-
-### Configuration Files
 - Created `config.local.php` at project root with SQLite configuration
-- Config file is in `.gitignore` for security
-
-### Workflow Setup
 - PHP built-in server configured on port 5000
 - Server command: `php -S 0.0.0.0:5000`
 - Deployment configured for autoscale
@@ -129,9 +129,10 @@ php api/init_database.php
 ```
 
 ### Adding Sample Data
-Currently the database is empty. You can add products through:
+The database contains a sample product for testing. You can add more products through:
 1. The admin panel (after setting up Firebase and logging in)
 2. Direct SQL inserts via SQLite
+3. Using the API endpoints with proper authentication
 
 ## Production Deployment Considerations
 When deploying to production (outside Replit):
@@ -147,5 +148,5 @@ When deploying to production (outside Replit):
 
 ## Known Issues
 - Firebase credentials need to be configured (currently using placeholders)
-- No sample data in database
 - Favicon.ico missing (causes 404 in logs, cosmetic only)
+- Category images are currently hosted externally (from odhiyati.vercel.app) - consider hosting locally for production
