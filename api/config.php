@@ -1,43 +1,31 @@
 <?php
-<?php
 // Database configuration
 // ⚠️ IMPORTANT: You MUST create config.local.php before deploying
 // The config.local.php file should be placed OUTSIDE public_html for security
 
-if (file_exists(__DIR__ . '/../../config.local.php')) {
+if (file_exists(__DIR__ . '/../config.local.php')) {
+    require_once __DIR__ . '/../config.local.php';
+} elseif (file_exists(__DIR__ . '/../../config.local.php')) {
     require_once __DIR__ . '/../../config.local.php';
 } else {
     // NO DEFAULT VALUES - config.local.php is REQUIRED
     die(json_encode([
-        'error' => 'Configuration file missing. Please create config.local.php outside public_html with your database credentials.'
+        'error' => 'Configuration file missing. Please create config.local.php with your database credentials.'
     ]));
 }
 
 define('DB_CHARSET', 'utf8mb4');
 
 // CORS headers for API
-// ⚠️ CRITICAL: Update ALLOWED_ORIGINS before deploying to production!
-$ALLOWED_ORIGINS = [
-    'http://localhost',
-    'http://127.0.0.1',
-    // ⚠️ REMOVE localhost entries and ADD your production domain:
-    // 'https://odhiyaty.com',
-    // 'https://www.odhiyaty.com',
-];
-
+// Allow all origins in development (Replit environment)
 $origin = isset($_SERVER['HTTP_ORIGIN']) ? $_SERVER['HTTP_ORIGIN'] : '';
-$isAllowed = false;
 
-// Check if origin is in allowed list (exact match or starts with allowed)
-foreach ($ALLOWED_ORIGINS as $allowed) {
-    if ($origin === $allowed || strpos($origin, $allowed) === 0) {
-        $isAllowed = true;
-        break;
-    }
+// For Replit, allow all origins since the webview runs on dynamic domains
+if (!empty($origin)) {
+    header('Access-Control-Allow-Origin: ' . $origin);
+} else {
+    header('Access-Control-Allow-Origin: *');
 }
-
-// Set CORS header - deny unknown origins
-header('Access-Control-Allow-Origin: ' . ($isAllowed ? $origin : 'null'));
 header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
 header('Access-Control-Allow-Headers: Content-Type, Authorization');
 header('Access-Control-Allow-Credentials: true');
@@ -55,8 +43,15 @@ function getDbConnection() {
     
     if ($conn === null) {
         try {
-            $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
-            $conn = new PDO($dsn, DB_USER, DB_PASS);
+            if (defined('DB_TYPE') && DB_TYPE === 'sqlite') {
+                $dsn = "sqlite:" . DB_PATH;
+                $conn = new PDO($dsn);
+                // Enable foreign key constraints for SQLite
+                $conn->exec('PRAGMA foreign_keys = ON');
+            } else {
+                $dsn = "mysql:host=" . DB_HOST . ";dbname=" . DB_NAME . ";charset=" . DB_CHARSET;
+                $conn = new PDO($dsn, DB_USER, DB_PASS);
+            }
             $conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
             $conn->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
             $conn->setAttribute(PDO::ATTR_EMULATE_PREPARES, false);
